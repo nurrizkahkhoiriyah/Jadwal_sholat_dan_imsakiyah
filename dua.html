@@ -1,0 +1,578 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Al-Qur'an</title>
+  <!-- Font Awesome CDN -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <style>
+    /* Warna Utama: Hijau kebiruan (#16A085), Latar: Abu-abu lembut (#ECF0F1) dan putih */
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #F4F7F6;
+      color: #2C3E50;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+    .columns {
+      display: flex;
+      gap: 20px;
+    }
+    .left-column,
+    .right-column {
+      background: #ECF0F1;
+      padding: 15px;
+      border-radius: 8px;
+      height: 80vh;
+      overflow-y: auto;
+    }
+    .left-column {
+      flex: 0 0 300px;
+    }
+    .right-column {
+      flex: 1;
+      position: relative;
+    }
+    h1 {
+      text-align: center;
+      color: #16A085;
+      margin-top: 0;
+    }
+    h2 {
+      color: #16A085;
+    }
+    /* Style untuk input pencarian */
+    #searchSurah {
+      width: 100%;
+      padding: 8px;
+      margin-bottom: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin: 0;
+    }
+    li {
+      padding: 12px;
+      margin-bottom: 10px;
+      background: #fff;
+      border-left: 4px solid #16A085;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s, transform 0.3s;
+    }
+    li:hover {
+      background: #d1e7e4;
+      transform: translateX(5px);
+    }
+    .ayat {
+      margin-bottom: 20px;
+      padding: 15px;
+      background: #f9f9f9;
+      border-left: 4px solid #16A085;
+      border-radius: 4px;
+    }
+    .ayat p {
+      margin: 8px 0;
+      line-height: 1.6;
+    }
+    /* Badge untuk nomor ayat */
+    .arabic-number-badge {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      line-height: 24px;
+      background: linear-gradient(135deg, #16A085, #1abc9c);
+      border: 2px solid #fff;
+      border-radius: 50%;
+      text-align: center;
+      margin-left: 10px;
+      font-weight: bold;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      font-size: 0.75em;
+    }
+    /* Teks Arab */
+    .arabic {
+      font-size: 1.2em;
+      text-align: right;
+      direction: rtl;
+    }
+    /* Desain UI tulisan Bismillah */
+    .bismillah {
+      text-align: center;
+      font-size: 1.8em;
+      margin: 20px auto;
+      padding: 10px 20px;
+      max-width: 90%;
+      background: #fdf6e3;
+      border: 2px solid #16A085;
+      border-radius: 12px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.16);
+      direction: rtl;
+      font-weight: bold;
+      letter-spacing: 1px;
+      color: #16A085;
+      font-family: 'Amiri', serif;
+    }
+    .icons {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .icons button {
+      background: #16A085;
+      border: none;
+      color: #fff;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background 0.3s;
+      font-size: 1em;
+    }
+    .icons button:hover {
+      background: #138f75;
+    }
+    /* Tombol Play All */
+    .play-all-btn {
+      background: #16A085;
+      color: #fff;
+      border: none;
+      padding: 10px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 15px;
+      transition: background 0.3s;
+    }
+    .play-all-btn:hover {
+      background: #138f75;
+    }
+    /* Tombol Global Bookmark */
+    #goToBookmarkBtn {
+      background: #16A085;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 10px;
+      transition: background 0.3s;
+    }
+    #goToBookmarkBtn:hover {
+      background: #138f75;
+    }
+    /* Tombol Navigasi Surah */
+    #prevSurahBtn, #nextSurahBtn {
+      background: #16A085;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 4px;
+      cursor: pointer;
+      margin: 5px;
+      transition: background 0.3s;
+    }
+    #prevSurahBtn:hover, #nextSurahBtn:hover {
+      background: #138f75;
+    }
+    @media (max-width: 768px) {
+      .columns {
+        flex-direction: column;
+      }
+      .left-column, .right-column {
+        height: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="columns">
+      <!-- Kolom Kiri: Daftar Surat -->
+      <div class="left-column">
+        <h1>Daftar Surat</h1>
+        <input type="text" id="searchSurah" placeholder="Cari Surah..." />
+        <ul id="suratList"></ul>
+      </div>
+      <!-- Kolom Kanan: Ayat Surat -->
+      <div class="right-column">
+        <!-- Tombol Global Bookmark & Navigasi Surah -->
+        <div style="margin-bottom:10px;">
+          <button id="goToBookmarkBtn"><i class="far fa-bookmark"></i></button>
+          <button id="prevSurahBtn"><i class="fas fa-arrow-left"></i> Surah Sebelumnya</button>
+          <button id="nextSurahBtn">Surah Berikutnya <i class="fas fa-arrow-right"></i></button>
+        </div>
+        <div id="ayatContainer">
+          <p>Pilih salah satu surat di sebelah kiri untuk menampilkan ayatnya.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Global variabel untuk data surat, indeks surah aktif, dan kontrol audio
+    let allSurat = [];
+    let currentSurahIndex = -1;
+    let isPlayingAllAudio = false;
+    let currentAudio = null;
+    let currentIndividualAudio = null;
+    let currentIndividualKey = null;
+
+    // Fungsi konversi nomor ke angka Arab
+    function toArabicNumerals(num) {
+      const arabicDigits = ['٠','١','٢','٣','٤','٥','٦','٧','٨','٩'];
+      return num.toString().split('').map(digit => arabicDigits[digit]).join('');
+    }
+
+    // Fungsi untuk menghentikan pemutaran audio global
+    function stopAllAudio() {
+      isPlayingAllAudio = false;
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+        currentAudio = null;
+      }
+    }
+
+    // Fungsi untuk menghentikan audio individual (jika ada)
+    function stopIndividualAudio() {
+      if (currentIndividualAudio) {
+        currentIndividualAudio.pause();
+        currentIndividualAudio.currentTime = 0;
+        document.querySelectorAll('button[title="Putar Audio Individual"]').forEach(btn => {
+          if (btn.getAttribute('data-key') === currentIndividualKey) {
+            btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+          }
+        });
+        currentIndividualAudio = null;
+        currentIndividualKey = null;
+      }
+    }
+
+    // Fungsi memutar audio full dari properti audioFull
+    function playFullAudio(url, playBtn) {
+      if (isPlayingAllAudio) {
+        stopAllAudio();
+        playBtn.innerHTML = '<i class="fas fa-play"></i>';
+      } else {
+        stopIndividualAudio();
+        isPlayingAllAudio = true;
+        playBtn.innerHTML = '<i class="fas fa-stop"></i> Stop';
+        currentAudio = new Audio(url);
+        currentAudio.play();
+        currentAudio.addEventListener('ended', function() {
+          isPlayingAllAudio = false;
+          playBtn.innerHTML = '<i class="fas fa-play"></i>';
+        });
+      }
+    }
+
+    // Fungsi memutar audio individual dengan toggle
+    function playAudioIndividual(url, btn, key) {
+      stopAllAudio();
+      if (currentIndividualKey === key && currentIndividualAudio) {
+        stopIndividualAudio();
+        btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+      } else {
+        stopIndividualAudio();
+        currentIndividualAudio = new Audio(url);
+        currentIndividualKey = key;
+        currentIndividualAudio.play();
+        btn.innerHTML = '<i class="fas fa-stop"></i>';
+        currentIndividualAudio.addEventListener('ended', function() {
+          btn.innerHTML = '<i class="fas fa-volume-up"></i>';
+          currentIndividualAudio = null;
+          currentIndividualKey = null;
+        });
+      }
+    }
+
+    // Fungsi menyalin teks ke clipboard
+    function copyText(text) {
+      navigator.clipboard.writeText(text)
+        .then(() => { alert("Teks berhasil disalin!"); })
+        .catch(err => { console.error("Gagal menyalin teks: ", err); });
+    }
+
+    // Fungsi mengelola favorite ayat
+    function toggleFavorite(key, btn) {
+      let favs = JSON.parse(localStorage.getItem('favoriteAyats') || '[]');
+      if (favs.includes(key)) {
+        favs = favs.filter(item => item !== key);
+        btn.innerHTML = '<i class="far fa-heart"></i>';
+      } else {
+        favs.push(key);
+        btn.innerHTML = '<i class="fas fa-heart"></i>';
+      }
+      localStorage.setItem('favoriteAyats', JSON.stringify(favs));
+    }
+
+    // Fungsi mengatur bookmark per ayat dan menyimpan nama surah
+    function setBookmark(key, btn) {
+      const currentBookmark = localStorage.getItem('lastReadAyat');
+      if (currentBookmark === key) {
+        localStorage.removeItem('lastReadAyat');
+        localStorage.removeItem('lastReadSurah');
+        btn.innerHTML = '<i class="far fa-bookmark"></i>';
+      } else {
+        localStorage.setItem('lastReadAyat', key);
+        const surahName = btn.getAttribute('data-surah');
+        localStorage.setItem('lastReadSurah', surahName);
+        btn.innerHTML = '<i class="fas fa-bookmark"></i>';
+      }
+      updateBookmarkButtons();
+      updateGlobalBookmarkButton();
+    }
+
+    // Perbarui tombol bookmark tiap ayat
+    function updateBookmarkButtons() {
+      document.querySelectorAll('button[title="Bookmark (terakhir dibaca)"]').forEach(btn => {
+        const key = btn.getAttribute('data-key');
+        const bookmarked = localStorage.getItem('lastReadAyat');
+        btn.innerHTML = (key === bookmarked) ? '<i class="fas fa-bookmark"></i>' : '<i class="far fa-bookmark"></i>';
+      });
+    }
+
+    // Perbarui tombol global "Go to Bookmark" dengan nama surah
+    function updateGlobalBookmarkButton() {
+      const btn = document.getElementById('goToBookmarkBtn');
+      const bookmarked = localStorage.getItem('lastReadAyat');
+      const surahName = localStorage.getItem('lastReadSurah');
+      if (bookmarked && surahName) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-bookmark"></i> ' + surahName;
+      } else {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="far fa-bookmark"></i>';
+      }
+    }
+
+    // Event untuk tombol global "Go to Bookmark"
+    document.getElementById('goToBookmarkBtn').addEventListener('click', function() {
+      const bookmarkKey = localStorage.getItem('lastReadAyat');
+      if (!bookmarkKey) {
+        alert("Tidak ada bookmark.");
+        return;
+      }
+      let targetElement = document.getElementById(bookmarkKey);
+      if (targetElement) {
+        const rect = targetElement.getBoundingClientRect();
+        if (rect.top >= 0 && rect.top < window.innerHeight / 2) {
+          localStorage.removeItem('lastReadAyat');
+          localStorage.removeItem('lastReadSurah');
+          updateBookmarkButtons();
+          updateGlobalBookmarkButton();
+          alert("Bookmark dihapus.");
+        } else {
+          targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      } else {
+        const parts = bookmarkKey.split('_');
+        const targetSurahNumber = parts[0];
+        const surahItems = document.querySelectorAll('#suratList li');
+        let targetSurahItem = null;
+        surahItems.forEach(item => {
+          if (item.innerText.startsWith(targetSurahNumber + '.')) {
+            targetSurahItem = item;
+          }
+        });
+        if (targetSurahItem) {
+          targetSurahItem.click();
+          setTimeout(() => {
+            const newTarget = document.getElementById(bookmarkKey);
+            if (newTarget) {
+              newTarget.scrollIntoView({ behavior: "smooth", block: "center" });
+            } else {
+              alert("Bookmark tidak ditemukan setelah memuat surah.");
+            }
+          }, 1000);
+        } else {
+          alert("Surah untuk bookmark tidak ditemukan.");
+        }
+      }
+    });
+
+    // Fungsi loadSurah untuk memuat data surah dan merender ayat serta audio full atau partial
+    function loadSurah(surah, index) {
+      stopAllAudio();
+      stopIndividualAudio();
+      currentSurahIndex = index;
+      fetch(`https://equran.id/api/v2/surat/${surah.nomor}`)
+        .then(response => response.json())
+        .then(detailData => {
+          const ayatContainer = document.getElementById('ayatContainer');
+          ayatContainer.innerHTML = `<h2>${surah.namaLatin} - ${surah.arti}</h2>`;
+          document.querySelector('.right-column').scrollTop = 0;
+
+          // Jika properti audioFull tersedia, gunakan untuk full audio
+          if (detailData.data && detailData.data.audioFull) {
+            const fullAudioUrl = detailData.data.audioFull["01"] || 
+              (function(){
+                const keys = Object.keys(detailData.data.audioFull);
+                return keys.length > 0 ? detailData.data.audioFull[keys[0]] : null;
+              })();
+            if (fullAudioUrl) {
+              const playAllBtn = document.createElement('button');
+              playAllBtn.classList.add('play-all-btn');
+              playAllBtn.innerHTML = '<i class="fas fa-play"></i>';
+              playAllBtn.addEventListener('click', function() {
+                playFullAudio(fullAudioUrl, playAllBtn);
+              });
+              ayatContainer.appendChild(playAllBtn);
+            }
+          } 
+          // Jika audioFull tidak tersedia, fallback ke audio partial
+          else if (detailData.data && detailData.data.ayat) {
+            const audioUrls = [];
+            detailData.data.ayat.forEach(ayat => {
+              if (ayat.audio) {
+                const keys = Object.keys(ayat.audio);
+                if (keys.length > 0) {
+                  audioUrls.push(ayat.audio[keys[0]]);
+                }
+              }
+            });
+            if (audioUrls.length > 0) {
+              const playAllBtn = document.createElement('button');
+              playAllBtn.classList.add('play-all-btn');
+              playAllBtn.innerHTML = '<i class="fas fa-play"></i> Play All Audio';
+              playAllBtn.addEventListener('click', function() {
+                if (isPlayingAllAudio) {
+                  stopAllAudio();
+                  playAllBtn.innerHTML = '<i class="fas fa-play"></i> Play All Audio';
+                } else {
+                  stopIndividualAudio();
+                  isPlayingAllAudio = true;
+                  playAllBtn.innerHTML = '<i class="fas fa-stop"></i> Stop';
+                  playSequentialAudio(audioUrls);
+                }
+              });
+              ayatContainer.appendChild(playAllBtn);
+            }
+          }
+
+          // Tampilkan Bismillah jika bukan surah 1 (Al-Fatihah) atau 9 (At-Taubah)
+          if (Number(surah.nomor) !== 1 && Number(surah.nomor) !== 9) {
+            ayatContainer.innerHTML += `<p class="bismillah">بِسْمِ اللهِ الرَّحْمٰنِ الرَّحِيْمِ</p>`;
+          }
+          
+          // Render setiap ayat secara individu
+          if (detailData.data && detailData.data.ayat) {
+            detailData.data.ayat.forEach(ayat => {
+              const ayatDiv = document.createElement('div');
+              ayatDiv.classList.add('ayat');
+              const uniqueKey = surah.nomor + '_' + ayat.nomorAyat;
+              ayatDiv.id = uniqueKey;
+              const favs = JSON.parse(localStorage.getItem('favoriteAyats') || '[]');
+              const isFav = favs.includes(uniqueKey);
+              const bookmarked = localStorage.getItem('lastReadAyat');
+              const isBookmarked = (bookmarked === uniqueKey);
+              ayatDiv.innerHTML = `
+                <p class="arabic">
+                  ${ayat.teksArab}
+                  <span class="arabic-number-badge">${toArabicNumerals(ayat.nomorAyat)}</span>
+                </p>
+                <p><em>${ayat.teksLatin}</em></p>
+                ${ayat.teksIndonesia ? `<p>${ayat.teksIndonesia}</p>` : ''}
+                <div class="icons">
+                  <button title="Putar Audio Individual" data-key="${uniqueKey}" onclick="playAudioIndividual('${(function(){
+                    if(ayat.audio){
+                      return ayat.audio["01"] || (function(){
+                        const keys = Object.keys(ayat.audio);
+                        return keys.length > 0 ? ayat.audio[keys[0]] : '';
+                      })();
+                    }
+                    return '';
+                  })()}', this, '${uniqueKey}')">
+                    <i class="fas fa-volume-up"></i>
+                  </button>
+                  <button title="Salin Teks" onclick="copyText('${(ayat.teksArab + ' ' + ayat.teksLatin + (ayat.teksIndonesia ? ' ' + ayat.teksIndonesia : '')).replace(/'/g, '\\\'')}')">
+                    <i class="fas fa-copy"></i>
+                  </button>
+                  <button title="Favorite" data-key="${uniqueKey}" onclick="toggleFavorite('${uniqueKey}', this)">
+                    ${isFav ? '<i class="fas fa-heart"></i>' : '<i class="far fa-heart"></i>'}
+                  </button>
+                  <button title="Bookmark (terakhir dibaca)" data-key="${uniqueKey}" data-surah="${surah.namaLatin}" onclick="setBookmark('${uniqueKey}', this)">
+                    ${isBookmarked ? '<i class="fas fa-bookmark"></i>' : '<i class="far fa-bookmark"></i>'}
+                  </button>
+                </div>
+              `;
+              ayatContainer.appendChild(ayatDiv);
+            });
+            updateBookmarkButtons();
+            updateGlobalBookmarkButton();
+          } else {
+            ayatContainer.innerHTML += `<p>Data ayat tidak tersedia.</p>`;
+          }
+        })
+        .catch(error => {
+          console.error('Error fetching ayat:', error);
+          document.getElementById('ayatContainer').innerHTML = `<p>Terjadi kesalahan saat mengambil data ayat.</p>`;
+        });
+    }
+
+    // Render daftar surat di kolom kiri
+    function renderSuratList(suratArray) {
+      const suratList = document.getElementById('suratList');
+      suratList.innerHTML = '';
+      suratArray.forEach((surah, index) => {
+        const li = document.createElement('li');
+        li.innerHTML = `<strong>${surah.nomor}. ${surah.namaLatin}</strong> - ${surah.arti}`;
+        li.addEventListener('click', () => {
+          loadSurah(surah, index);
+        });
+        suratList.appendChild(li);
+      });
+    }
+
+    // Inisialisasi data surat
+    fetch('https://equran.id/api/v2/surat')
+      .then(response => response.json())
+      .then(data => {
+        allSurat = data.data;
+        renderSuratList(allSurat);
+      })
+      .catch(error => console.error('Error fetching data surat:', error));
+
+    document.getElementById('searchSurah').addEventListener('input', function() {
+      const query = this.value.toLowerCase();
+      const filteredSurat = allSurat.filter(surat =>
+        surat.namaLatin.toLowerCase().includes(query) ||
+        surat.arti.toLowerCase().includes(query)
+      );
+      renderSuratList(filteredSurat);
+    });
+
+    // Tombol Navigasi Surah: Sebelumnya dan Berikutnya
+    document.getElementById('prevSurahBtn').addEventListener('click', function() {
+      if (currentSurahIndex > 0) {
+        loadSurah(allSurat[currentSurahIndex - 1], currentSurahIndex - 1);
+      } else {
+        alert("Surah sebelumnya tidak tersedia.");
+      }
+    });
+
+    document.getElementById('nextSurahBtn').addEventListener('click', function() {
+      if (currentSurahIndex < allSurat.length - 1) {
+        loadSurah(allSurat[currentSurahIndex + 1], currentSurahIndex + 1);
+      } else {
+        alert("Surah berikutnya tidak tersedia.");
+      }
+    });
+
+    // Perbarui tombol global bookmark saat halaman dimuat
+    updateGlobalBookmarkButton();
+  </script>
+</body>
+</html>
